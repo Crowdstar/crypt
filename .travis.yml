@@ -1,0 +1,13 @@
+language: php
+
+php:
+  - 7.3
+  - 7.2
+  - 7.1
+
+before_install:
+  - composer update -n
+
+script:
+  - ./vendor/bin/phpcs -v --standard=PSR12 src tests/unit
+  - ./vendor/bin/phpunit
