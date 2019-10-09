@@ -5,7 +5,7 @@
 
 # Summary
 
-The crypt package creates a simple interface for the phpseclib AES-128 library. Its interface allows encryption and decryption of strings with a layer of bas64 encoding for easy transmision including the initialization vector.
+The crypt package creates a simple interface for the phpseclib AES-128 library. Its interface allows encryption and decryption of strings with a layer of base64 encoding for easy transmission including the initialization vector.
 
 # Installation
 

@@ -5,11 +5,11 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=7.1",
-        "squizlabs/php_codesniffer": ">=2.0",
         "phpseclib/phpseclib": "~2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.0"
+        "phpunit/phpunit": "~7.0",
+        "squizlabs/php_codesniffer": ">=2.0"
     },
     "autoload": {
         "psr-4": {
