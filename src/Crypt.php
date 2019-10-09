@@ -1,4 +1,5 @@
 <?php
+
 /**************************************************************************
  * Copyright 2018 Glu Mobile Inc.
  *
@@ -28,9 +29,10 @@ use phpseclib\Crypt\AES;
  *
  * @package CrowdStar\Home
  */
+
 class Crypt
 {
-    const DEFAULT_IV_LENGTH = 16;
+    public const DEFAULT_IV_LENGTH = 16;
 
     /**
      * @var AES A CBC-mode AES object using the RSA PKCS padding standards for padding.
@@ -81,7 +83,9 @@ class Crypt
         if ($wasItSecure) {
             return $iv;
         } else {
-            throw new Exception("Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use.");
+            throw new Exception(
+                "Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use."
+            );
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**************************************************************************
  * Copyright 2018 Glu Mobile Inc.
  *
@@ -52,7 +53,9 @@ class CryptTest extends TestCase
      */
     public function testBadIVLength()
     {
-        $this->expectExceptionMessage("Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use.");
+        $this->expectExceptionMessage(
+            "Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use."
+        );
         (new Crypt('test_secret'))->encrypt('test_message', 0);
     }
 }
