@@ -1,7 +1,6 @@
 <?php
-
-/**************************************************************************
- * Copyright 2018 Glu Mobile Inc.
+/**
+ * Copyright 2021 Glu Mobile Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *************************************************************************/
+ */
+
+declare(strict_types=1);
 
 namespace CrowdStar\Crypt;
 
-use phpseclib\Crypt\AES;
+use phpseclib3\Crypt\AES;
 
 /**
  * Class Crypt
@@ -26,97 +27,73 @@ use phpseclib\Crypt\AES;
  * This class encrypts and decrypts plain text using AES-128 with a variable length initialization vector
  *
  * IV is generated using openssl pseudo random
- *
- * @package CrowdStar\Home
  */
-
 class Crypt
 {
     public const DEFAULT_IV_LENGTH = 16;
 
     /**
-     * @var AES A CBC-mode AES object using the RSA PKCS padding standards for padding.
+     * A CBC-mode AES object using the RSA PKCS padding standards for padding.
      */
-    protected $aesCrypt;
+    protected AES $aesCrypt;
 
-    /**
-     * Crypt constructor.
-     *
-     * @param string $secretKey
-     */
-    public function __construct($secretKey)
+    public function __construct(string $secretKey)
     {
-        $aesCrypt = new AES();
+        $aesCrypt = new AES('cbc');
         $aesCrypt->setKey($secretKey);
         $this->setAesCrypt($aesCrypt);
     }
 
     /**
-     * @return AES
-     */
-    public function getAesCrypt(): AES
-    {
-        return $this->aesCrypt;
-    }
-
-    /**
-     * @param AES $aesCrypt
-     * @return Crypt $this
-     */
-    protected function setAesCrypt(AES $aesCrypt): Crypt
-    {
-        $this->aesCrypt = $aesCrypt;
-        return $this;
-    }
-
-    /**
-     * generate initialization vector of specified length in bytes
-     * @see https://stackoverflow.com/questions/7280769/how-to-securely-generate-an-iv-for-aes-cbc-encryption
-     *
-     * @param int $length
-     * @return string
-     * @throws Exception
-     */
-    private function generateIV(int $length): string
-    {
-        $iv = openssl_random_pseudo_bytes($length, $wasItSecure);
-        if ($wasItSecure) {
-            return $iv;
-        } else {
-            throw new Exception(
-                "Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use."
-            );
-        }
-    }
-
-    /**
-     * @param string $plainText
      * @param int $ivLength should match AES block size which is 16/128 bytes/bits
-     * @return string
      * @throws Exception
      */
     public function encrypt(string $plainText, int $ivLength = self::DEFAULT_IV_LENGTH): string
     {
-        $iv = $this->generateIV($ivLength);
+        $iv       = $this->generateIV($ivLength);
         $aesCrypt = $this->getAesCrypt();
         $aesCrypt->setIV($iv);
 
         return base64_encode($aesCrypt->encrypt($plainText) . $iv);
     }
 
-    /**
-     * @param string $encodedData
-     * @param int $ivLength
-     * @return string|null
-     */
-    public function decrypt(string $encodedData, int $ivLength = self::DEFAULT_IV_LENGTH): string
+    public function decrypt(string $encodedData, int $ivLength = self::DEFAULT_IV_LENGTH): ?string
     {
-        $data = base64_decode($encodedData);
-        $iv = substr($data, -$ivLength);
+        $data       = base64_decode($encodedData);
+        $iv         = substr($data, -$ivLength);
         $cipherText = substr($data, 0, -$ivLength);
-        $aesCrypt = $this->getAesCrypt();
+        $aesCrypt   = $this->getAesCrypt();
         $aesCrypt->setIV($iv);
 
         return $aesCrypt->decrypt($cipherText);
+    }
+
+    protected function setAesCrypt(AES $aesCrypt): self
+    {
+        $this->aesCrypt = $aesCrypt;
+        return $this;
+    }
+
+    protected function getAesCrypt(): AES
+    {
+        return $this->aesCrypt;
+    }
+
+    /**
+     * generate initialization vector of specified length in bytes
+     * @see https://stackoverflow.com/questions/7280769/how-to-securely-generate-an-iv-for-aes-cbc-encryption
+     *
+     * @throws Exception
+     */
+    private function generateIV(int $length): string
+    {
+        if ($length < 1) {
+            throw new Exception('The length of the desired string of bytes must be a positive integer.');
+        }
+        $iv = openssl_random_pseudo_bytes($length, $wasItSecure);
+        if (!$wasItSecure) {
+            throw new Exception('Non-cryptographically strong algorithm used for iv generation. This IV is not safe to use.');
+        }
+        return $iv;
     }
 }

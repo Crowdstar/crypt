@@ -1,6 +1,6 @@
 <?php
-/**************************************************************************
- * Copyright 2018 Glu Mobile Inc.
+/**
+ * Copyright 2021 Glu Mobile Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *************************************************************************/
+ */
+
+declare(strict_types=1);
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
-require_once './vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
