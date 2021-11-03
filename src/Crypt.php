@@ -22,11 +22,8 @@ namespace CrowdStar\Crypt;
 use phpseclib3\Crypt\AES;
 
 /**
- * Class Crypt
- *
- * This class encrypts and decrypts plain text using AES-128 with a variable length initialization vector
- *
- * IV is generated using openssl pseudo random
+ * This class encrypts and decrypts plain text using AES-128 with a variable length initialization vector. IV is
+ * generated using openssl pseudo random.
  */
 class Crypt
 {
@@ -80,10 +77,10 @@ class Crypt
     }
 
     /**
-     * generate initialization vector of specified length in bytes
-     * @see https://stackoverflow.com/questions/7280769/how-to-securely-generate-an-iv-for-aes-cbc-encryption
+     * Generate initialization vector of specified length in bytes.
      *
      * @throws Exception
+     * @see https://stackoverflow.com/questions/7280769/how-to-securely-generate-an-iv-for-aes-cbc-encryption
      */
     private function generateIV(int $length): string
     {
