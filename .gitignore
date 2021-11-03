@@ -6,16 +6,20 @@
 # Ignore PhpStorm files
 /.idea/
 
+# Ignore NetBeans files
+/nbproject/
+
 # Ignore files under Mac
 .DS_Store
 
-# Ignore 3rd party tools
-/composer.phar
+# Ignore 3rd party packages
 /composer.lock
 /vendor/*
 
-# Ignore folder /temp
-/temp/*
+# Ignore test files
+/.php-cs-fixer.dist.php
+/.phpunit.result.cache
+/phpunit.xml
 
-# phpunit cache
-.phpunit.result.cache
+# Ignore temporary files
+/.phplint-cache

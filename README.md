@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Crowdstar/crypt.svg?branch=master)](https://travis-ci.org/Crowdstar/crypt)
+[![Library Status](https://github.com/Crowdstar/crypt/workflows/Unit%20Tests/badge.svg)](https://github.com/Crowdstar/crypt/actions)
 [![Latest Stable Version](https://poser.pugx.org/Crowdstar/crypt/v/stable.svg)](https://packagist.org/packages/crowdstar/crypt)
 [![Latest Unstable Version](https://poser.pugx.org/Crowdstar/crypt/v/unstable.svg)](https://packagist.org/packages/crowdstar/crypt)
 [![License](https://poser.pugx.org/Crowdstar/crypt/license.svg)](https://packagist.org/packages/crowdstar/crypt)
@@ -10,10 +10,17 @@ The crypt package creates a simple interface for the phpseclib AES-128 library. 
 # Installation
 
 ```bash
-composer require crowdstar/crypt:~1.0.0
+composer require crowdstar/crypt:~2.0.0
 ```
 
 # Sample Usage
+
+Before using the library, you need to choose a secret key, which should be of size 16, 24 or 32 only.
+
+```php
+<?php
+$secretKey = "1234567890123456";
+```
 
 #### 1. Encrypt and Encode plain text data for storage or transmission
 
@@ -22,8 +29,7 @@ composer require crowdstar/crypt:~1.0.0
 <?php
 use CrowdStar\Crypt\Crypt;
 
-$encodedEncryptedData = (new Crypt("secret_key"))->encrypt("message");
-
+$encodedEncryptedData = (new Crypt($secretKey))->encrypt("message");
 ```
 
 #### 2. Decoding and Decrypting stored or received data
@@ -31,7 +37,7 @@ $encodedEncryptedData = (new Crypt("secret_key"))->encrypt("message");
 <?php
 use CrowdStar\Crypt\Crypt;
 
-$encodedEncryptedData = (new Crypt("secret_key"))->decrypt("encoded_encrypted_data");
+$encodedEncryptedData = (new Crypt($secretKey))->decrypt("encoded_encrypted_data");
 ```
 
 #### 3. Encrypting and Decrypting with an alternate length initialization vector
@@ -39,7 +45,7 @@ $encodedEncryptedData = (new Crypt("secret_key"))->decrypt("encoded_encrypted_da
 <?php
 use CrowdStar\Crypt\Crypt;
 
-$crypt = new Crypt("secret_key");
+$crypt = new Crypt($secretKey);
 
 $alternateIVLength = 8;
 $encodedEncryptedData = $crypt->encrypt("message", $alternateIVLength);
