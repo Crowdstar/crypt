@@ -31,28 +31,76 @@ use PHPUnit\Framework\TestCase;
  */
 class CryptTest extends TestCase
 {
-    protected const TEST_KEY = '1234567890123456';
+    protected const TEST_DATA = 'test_message';
+
+    protected const TEST_KEY1 = '1234567890123456';
+
+    protected const TEST_KEY2 = '9876543210123456';
+
+    public function dataEncryption(): array
+    {
+        return [
+            [
+                44,
+                self::TEST_DATA,
+                self::TEST_KEY1,
+                'Encrypt a string with the first key.',
+            ],
+            [
+                44,
+                self::TEST_DATA,
+                self::TEST_KEY2,
+                'Encrypt a string with the second key.',
+            ],
+        ];
+    }
 
     /**
-     * @covers \CrowdStar\Crypt\Crypt::decrypt
+     * @dataProvider dataEncryption
      * @covers \CrowdStar\Crypt\Crypt::encrypt
      */
-    public function testEncryptionDecryption()
+    public function testEncryption(int $expectedLength, string $data, string $key, string $message)
     {
-        $testMessage = 'test_message';
-        $crypt       = new Crypt(static::TEST_KEY);
+        $encryptedData = (new Crypt($key))->encrypt($data);
 
-        $encodedData = $crypt->encrypt($testMessage);
-
-        // ensure message is encrypted
-        $data       = base64_decode($encodedData);
-        $cipherText = substr($data, 0, -Crypt::DEFAULT_IV_LENGTH);
-
+        $cipherText = substr(base64_decode($encryptedData), 0, -Crypt::DEFAULT_IV_LENGTH);
         // does not measure security but ensures the cipher text is some distance away from the original message
-        self::assertGreaterThan(5, levenshtein($testMessage, $cipherText));
+        self::assertGreaterThan(5, levenshtein($data, $cipherText));
 
-        // ensure message is decrypted correctly
-        self::assertEquals($testMessage, $crypt->decrypt($encodedData));
+        self::assertSame($expectedLength, strlen($encryptedData), $message);
+    }
+
+    public function dataDecryption(): array
+    {
+        return [
+            [
+                self::TEST_DATA,
+                'Btpxr9R00y2/69lseobzCPCv95ru0yvbN2tzGZphmqs=',
+                self::TEST_KEY1,
+                'Decrypt a string with the first key (the correct one).',
+            ],
+            [
+                self::TEST_DATA,
+                'LbdYEJg0GjBl7aVqhFu+QpwabowYX87qy/9itTu8nOE=',
+                self::TEST_KEY1,
+                'Decrypt another string with the first key (the correct one).',
+            ],
+            [
+                '',
+                'Btpxr9R00y2/69lseobzCPCv95ru0yvbN2tzGZphmqs=',
+                self::TEST_KEY2,
+                'Decrypt a string with the second key (the wrong one).',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataDecryption
+     * @covers \CrowdStar\Crypt\Crypt::decrypt
+     */
+    public function testDecryption(string $expectedData, string $encryptedData, string $key, string $message)
+    {
+        self::assertSame($expectedData, (new Crypt($key))->decrypt($encryptedData), $message);
     }
 
     /**
@@ -63,6 +111,6 @@ class CryptTest extends TestCase
         self::expectException(Exception::class);
         self::expectExceptionMessage('The length of the desired string of bytes must be a positive integer.');
 
-        (new Crypt(static::TEST_KEY))->encrypt('test_message', 0);
+        (new Crypt(static::TEST_KEY1))->encrypt('test_message', 0);
     }
 }

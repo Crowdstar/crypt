@@ -51,3 +51,5 @@ $alternateIVLength = 8;
 $encodedEncryptedData = $crypt->encrypt("message", $alternateIVLength);
 $plainText = $crypt->decrypt($encodedEncryptedData, $alternateIVLength);
 ```
+
+When bad data is passed in, the return value of method call `CrowdStar\Crypt\Crypt::decrypt()` will be an empty string.

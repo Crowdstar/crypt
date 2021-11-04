@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace CrowdStar\Crypt;
 
 use phpseclib3\Crypt\AES;
+use phpseclib3\Exception\BadDecryptionException;
 
 /**
  * This class encrypts and decrypts plain text using AES-128 with a variable length initialization vector. IV is
@@ -54,7 +55,10 @@ class Crypt
         return base64_encode($aesCrypt->encrypt($plainText) . $iv);
     }
 
-    public function decrypt(string $encodedData, int $ivLength = self::DEFAULT_IV_LENGTH): ?string
+    /**
+     * @return string when bad data is passed in, the return value will be an empty string
+     */
+    public function decrypt(string $encodedData, int $ivLength = self::DEFAULT_IV_LENGTH): string
     {
         $data       = base64_decode($encodedData);
         $iv         = substr($data, -$ivLength);
@@ -62,7 +66,11 @@ class Crypt
         $aesCrypt   = $this->getAesCrypt();
         $aesCrypt->setIV($iv);
 
-        return $aesCrypt->decrypt($cipherText);
+        try {
+            return $aesCrypt->decrypt($cipherText);
+        } catch (BadDecryptionException $e) {
+            return '';
+        }
     }
 
     protected function setAesCrypt(AES $aesCrypt): self
