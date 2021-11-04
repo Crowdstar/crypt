@@ -74,6 +74,31 @@ class CryptTest extends TestCase
     {
         return [
             [
+                '',
+                '',
+                self::TEST_KEY1,
+                'Decrypt an empty string.',
+            ],
+            [
+                '',
+                'invalid-key',
+                self::TEST_KEY1,
+                'Decrypt a invalid base64-encoded string.',
+            ],
+            [
+                '',
+                'YQ==',
+                self::TEST_KEY1,
+                'Decrypt a short string (a bad encrypted string; base64-encoded).',
+            ],
+            [
+                '',
+                'OGs3emdkaTlqd3ltMmh6Y21ubjJqMmp5Y25sMDU1ZHhsOWNod2poZWU3MG8=',
+                self::TEST_KEY1,
+                'Decrypt a long string "8k7zgdi9jwym2hzcmnn2j2jycnl055dxl9chwjhee70o" (a bad encrypted string; base64-encoded).',
+            ],
+
+            [
                 self::TEST_DATA,
                 'Btpxr9R00y2/69lseobzCPCv95ru0yvbN2tzGZphmqs=',
                 self::TEST_KEY1,
