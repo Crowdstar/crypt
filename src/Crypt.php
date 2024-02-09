@@ -19,7 +19,6 @@ declare(strict_types=1);
 
 namespace CrowdStar\Crypt;
 
-use LengthException;
 use phpseclib3\Crypt\AES;
 use phpseclib3\Exception\BadDecryptionException;
 
@@ -68,13 +67,13 @@ class Crypt
 
         try {
             $aesCrypt->setIV($iv);
-        } catch (LengthException $e) {
+        } catch (\LengthException $e) {
             return '';
         }
 
         try {
             return $aesCrypt->decrypt($cipherText);
-        } catch (BadDecryptionException|LengthException $e) {
+        } catch (BadDecryptionException|\LengthException $e) {
             return '';
         }
     }
