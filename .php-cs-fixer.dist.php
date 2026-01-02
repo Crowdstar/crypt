@@ -29,6 +29,7 @@ return (new PhpCsFixer\Config())
         'array_syntax'                           => ['syntax' => 'short'],
         'binary_operator_spaces'                 => ['operators' => ['=' => 'align', '=>' => 'align', ]],
         'blank_line_after_namespace'             => true,
+        'blank_line_after_opening_tag'           => false,
         'blank_line_before_statement'            => ['statements' => ['declare']],
         'class_attributes_separation'            => true,
         'concat_space'                           => ['spacing' => 'one'],

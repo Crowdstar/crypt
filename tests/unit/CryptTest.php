@@ -37,6 +37,21 @@ class CryptTest extends TestCase
 
     protected const TEST_KEY2 = '9876543210123456';
 
+    /**
+     * @dataProvider dataEncryption
+     * @covers \CrowdStar\Crypt\Crypt::encrypt
+     */
+    public function testEncryption(int $expectedLength, string $data, string $key, string $message)
+    {
+        $encryptedData = (new Crypt($key))->encrypt($data);
+
+        $cipherText = substr(base64_decode($encryptedData), 0, -Crypt::DEFAULT_IV_LENGTH);
+        // does not measure security but ensures the cipher text is some distance away from the original message
+        self::assertGreaterThan(5, levenshtein($data, $cipherText));
+
+        self::assertSame($expectedLength, strlen($encryptedData), $message);
+    }
+
     public function dataEncryption(): array
     {
         return [
@@ -56,18 +71,12 @@ class CryptTest extends TestCase
     }
 
     /**
-     * @dataProvider dataEncryption
-     * @covers \CrowdStar\Crypt\Crypt::encrypt
+     * @dataProvider dataDecryption
+     * @covers \CrowdStar\Crypt\Crypt::decrypt
      */
-    public function testEncryption(int $expectedLength, string $data, string $key, string $message)
+    public function testDecryption(string $expectedData, string $encryptedData, string $key, string $message)
     {
-        $encryptedData = (new Crypt($key))->encrypt($data);
-
-        $cipherText = substr(base64_decode($encryptedData), 0, -Crypt::DEFAULT_IV_LENGTH);
-        // does not measure security but ensures the cipher text is some distance away from the original message
-        self::assertGreaterThan(5, levenshtein($data, $cipherText));
-
-        self::assertSame($expectedLength, strlen($encryptedData), $message);
+        self::assertSame($expectedData, (new Crypt($key))->decrypt($encryptedData), $message);
     }
 
     public function dataDecryption(): array
@@ -117,15 +126,6 @@ class CryptTest extends TestCase
                 'Decrypt a string with the second key (the wrong one).',
             ],
         ];
-    }
-
-    /**
-     * @dataProvider dataDecryption
-     * @covers \CrowdStar\Crypt\Crypt::decrypt
-     */
-    public function testDecryption(string $expectedData, string $encryptedData, string $key, string $message)
-    {
-        self::assertSame($expectedData, (new Crypt($key))->decrypt($encryptedData), $message);
     }
 
     /**
