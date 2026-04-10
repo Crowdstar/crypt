@@ -23,3 +23,4 @@
 
 # Ignore temporary files
 /.phplint-cache
+/.phplint.cache
